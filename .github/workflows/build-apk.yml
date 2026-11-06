@@ -36,13 +36,15 @@ jobs:
           ./Godot_v4.3-stable_linux.x86_64 --headless --path . --editor --import --quit
       - name: Export debug APK
         env:
+          GODOT_ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
+          GODOT_JAVA_HOME: ${{ env.JAVA_HOME }}
           GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ github.workspace }}/debug.keystore
           GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
           mkdir -p build
           cp "$HOME/.android/debug.keystore" debug.keystore
-          ./Godot_v4.3-stable_linux.x86_64 --headless --path . --export-debug Android build/MOBA-1V1.apk
+          ./Godot_v4.3-stable_linux.x86_64 --headless --verbose --path . --export-debug Android build/MOBA-1V1.apk
           test -s build/MOBA-1V1.apk
       - uses: actions/upload-artifact@v4
         with:
