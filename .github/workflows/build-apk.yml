@@ -31,6 +31,21 @@ jobs:
         run: |
           mkdir -p "$HOME/.android"
           keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+      - name: Configure Godot Android SDK
+        run: |
+          mkdir -p scripts
+          cat > /tmp/configure_android.gd <<'GDSCRIPT'
+          extends SceneTree
+
+          func _initialize():
+              var settings = EditorInterface.get_editor_settings()
+              settings.set_setting("export/android/android_sdk_path", OS.get_environment("ANDROID_HOME"))
+              settings.set_setting("export/android/java_sdk_path", OS.get_environment("JAVA_HOME"))
+              settings.save()
+              quit()
+          GDSCRIPT
+          ./Godot_v4.3-stable_linux.x86_64 --headless --editor --path . --script /tmp/configure_android.gd
+
       - name: Import Godot assets
         run: |
           ./Godot_v4.3-stable_linux.x86_64 --headless --path . --editor --import --quit
